@@ -1,15 +1,19 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
 import Header from "../components/Header";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function MyApp({ Component, pageProps }) {
+  const client = new QueryClient();
   return (
     <>
-      <Header />
-      <Component {...pageProps} />
-      <Footer />
+      <QueryClientProvider client={client}>
+        <Header />
+        <Component {...pageProps} />
+        <Footer />
+      </QueryClientProvider>
     </>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

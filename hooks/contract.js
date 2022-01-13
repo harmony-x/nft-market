@@ -42,7 +42,9 @@ const useContracts = async ({ getRequest = true }) => {
   //   Once connected to the network, we can use signer for all!
   const appDetails = {
     chainId: 1666700000,
+    address: "", // TODO: Add address
   };
+  const address = appDetails.address;
   if (getRequest) {
     const provider = new ethers.providers.JsonRpcProvider({
       url: getUrl(appDetails.chainId),

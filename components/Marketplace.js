@@ -3,7 +3,7 @@ import useContracts from "../hooks/contract";
 import NFT from "./NFT";
 
 export default function Marketplace() {
-  const contracts = useContracts();
+  const contracts = useContracts({});
   const { data, refetch, isSuccess } = useQuery("nfts", async () => {
     const { nftContract, marketContract } = await contracts;
     const data = await marketContract.fetchMarketItems();
