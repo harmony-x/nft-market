@@ -14,7 +14,7 @@ export default function NFT({ nft, buyNft }) {
           {name}
         </h3>
         <p className="leading-relaxed text-base">{description}</p>
-        <p className="text-lg font-bold mt-6">{price} ETH</p>
+        <p className="text-lg font-bold mt-6">{price} ONE</p>
         <button
           onClick={() => buyNft(nft)}
           className="flex mx-auto mt-4 text-white bg-purple-500 border-0 py-3 px-6 focus:outline-none hover:bg-purple-600 rounded"

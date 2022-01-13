@@ -15,7 +15,7 @@ const getUrl = (chainId) => {
 const getMarketContractAddress = (chainId = 1666700000) => {
   switch (chainId) {
     case 1666700000:
-      return "0x2617b7048C96a5348762D9Aa241E345fcc5193f8";
+      return "0x83a8AEbd62e9f278E0b1Ad18A8da870f205618DC";
     default:
       throw new Error("Invalid network");
   }
@@ -24,7 +24,7 @@ const getMarketContractAddress = (chainId = 1666700000) => {
 export const getNFTContractAddress = (chainId = 1666700000) => {
   switch (chainId) {
     case 1666700000:
-      return "0x84DD6c803601780fFC0719Be04e2A9C7b49Db241";
+      return "0x1BEc92Fd8730E8df60203A44833CC20aE94E6D05";
     default:
       throw new Error("Invalid network");
   }

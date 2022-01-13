@@ -130,7 +130,7 @@ export default function Home() {
                   htmlFor="price"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Asset price in ETH
+                  Asset price in ONE
                 </label>
                 <input
                   type="number"
