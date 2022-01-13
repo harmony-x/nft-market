@@ -1,5 +1,5 @@
-export default function UserNFT({ nft }) {
-  const { image, name, description, price , sold} = nft;
+export default function UserNFT({ nft, creator }) {
+  const { image, name, description, price, sold } = nft;
   return (
     <article className="w-full md:w-1/2 lg:w-1/3 mb-10 px-4">
       <div className="rounded-lg shadow-sm transition-all hover:shadow-md pt-12 border-2 border-purple-100">
@@ -15,7 +15,10 @@ export default function UserNFT({ nft }) {
         </h3>
         <p className="leading-relaxed text-base">{description}</p>
         <p className="text-lg font-bold mt-6 py-6 bg-purple-500 text-purple-100">
-          {price} ONE <span className="font-medium">[{sold ? "Sold" : "Available"}]</span>
+          {price} ONE{" "}
+          {creator && (
+            <span className="font-medium">[{sold ? "Sold" : "Available"}]</span>
+          )}
         </p>
       </div>
     </article>

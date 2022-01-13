@@ -16,7 +16,7 @@ export const connectWallet = async ({setAppDetails}) => {
     const user = await signer.getAddress();
 
     if (chainId !== 1666700000) {
-      alert("Please Connect to Harmony Testnet Shard One");
+      alert("Please Connect to Harmony Testnet Shard  Zero ");
       throw new Error("Please Connect to the selected network");
     }
 

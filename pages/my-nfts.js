@@ -3,7 +3,7 @@ import { Tab } from "@headlessui/react";
 import UserNFT from "../components/UserNFT";
 import useContracts from "../hooks/contract";
 import { useQuery } from "react-query";
-import { createdNfts } from "../actions/nfts";
+import { createdNfts, purchasedNfts } from "../actions/nfts";
 import { useContext } from "react";
 import { appDetailsContext } from "../context/AppDetails";
 
@@ -49,8 +49,16 @@ const MainSection = () => {
     isSuccess,
     isLoading,
   } = useQuery("nfts-created", async () => await createdNfts());
+  const {
+    data: purchasedData,
+    isSuccess: purchasedSuccess,
+    isLoading: purchasedLoading,
+  } = useQuery("nfts-created", async () => await purchasedNfts());
+
   const created = createdData ?? [];
   const sold = created.filter((i) => i.sold);
+
+  const purchased = purchasedData ?? [];
 
   return (
     <section className="text-gray-600 body-font relative">
@@ -83,6 +91,19 @@ const MainSection = () => {
                 </span>
               )}
             </Tab>
+            <Tab className="">
+              {({ selected }) => (
+                <span
+                  className={
+                    selected
+                      ? "px-4 border-purple-500 border-b-4 font-bold"
+                      : "px-4 border-b-4"
+                  }
+                >
+                  My NFTs
+                </span>
+              )}
+            </Tab>
           </Tab.List>
           <Tab.Panels>
             <Tab.Panel className="flex flex-wrap -mx-4 -mb-10 text-center">
@@ -97,7 +118,7 @@ const MainSection = () => {
                 </div>
               )}
               {created.map((nft, idx) => (
-                <UserNFT key={idx} nft={nft} />
+                <UserNFT key={idx} nft={nft} creator />
               ))}
             </Tab.Panel>
             <Tab.Panel className="flex flex-wrap -mx-4 -mb-10 text-center">
@@ -112,6 +133,21 @@ const MainSection = () => {
                 </div>
               )}
               {sold.map((nft, idx) => (
+                <UserNFT key={idx} nft={nft} />
+              ))}
+            </Tab.Panel>
+            <Tab.Panel className="flex flex-wrap -mx-4 -mb-10 text-center">
+              {isLoading && (
+                <div className="w-full flex justify-center items-center">
+                  Loading...
+                </div>
+              )}
+              {isSuccess && sold.length === 0 && (
+                <div className="w-full flex justify-center items-center">
+                  You have not purchased any NFTs yet.
+                </div>
+              )}
+              {purchased.map((nft, idx) => (
                 <UserNFT key={idx} nft={nft} />
               ))}
             </Tab.Panel>
