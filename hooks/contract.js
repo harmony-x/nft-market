@@ -3,6 +3,34 @@ import Web3Modal from "web3modal";
 import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/Market.sol/NFTMarket.json";
 
+export const connectWallet = async ({setAppDetails}) => {
+  try {
+    const web3Modal = new Web3Modal();
+
+    const connection = await web3Modal.connect();
+
+    const provider = new ethers.providers.Web3Provider(connection);
+
+    const signer = provider.getSigner();
+    const chainId = (await provider.getNetwork()).chainId;
+    const user = await signer.getAddress();
+
+    if (chainId !== 1666700000) {
+      alert("Please Connect to Harmony Testnet Shard One");
+      throw new Error("Please Connect to the selected network");
+    }
+
+    setAppDetails({
+      address: user,
+      chainId,
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+};
+  
+
 const getUrl = (chainId) => {
   switch (chainId) {
     case 1666700000:
