@@ -1,10 +1,15 @@
+import axios from "axios";
+import { ethers } from "ethers";
 import { useQuery } from "react-query";
-import useContracts from "../hooks/contract";
+import useContracts, {
+  getMarketContract,
+  getNFTContractAddress,
+} from "../hooks/contract";
 import NFT from "./NFT";
 
 export default function Marketplace() {
   const contracts = useContracts({});
-  const { data, refetch, isSuccess } = useQuery("nfts", async () => {
+  const { data, refetch, isSuccess, isLoading } = useQuery("nfts", async () => {
     const { nftContract, marketContract } = await contracts;
     const data = await marketContract.fetchMarketItems();
     return await Promise.all(
@@ -28,25 +33,23 @@ export default function Marketplace() {
   const nfts = data ?? [];
 
   async function buyNft(nft) {
-    /* needs the user to sign the transaction, so will use Web3Provider and sign it */
-    const signer = await getSigner();
-    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+    try {
+      const contract = await getMarketContract();
 
-    /* user will be prompted to pay the asking process to complete the transaction */
-    const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-    const transaction = await contract.createMarketSale(
-      nftaddress,
-      nft.tokenId,
-      {
-        value: price,
-      }
-    );
-    await transaction.wait();
-    await refetch();
+      const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+      const transaction = await contract.createMarketSale(
+        getNFTContractAddress(),
+        nft.tokenId,
+        {
+          value: price,
+        }
+      );
+      await transaction.wait();
+      await refetch();
+    } catch (error) {
+      alert("Could not purchase the NFT");
+    }
   }
-
-  if (isSuccess && !nfts.length)
-    return <h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>;
 
   return (
     <section className="text-gray-600 body-font">
@@ -55,6 +58,14 @@ export default function Marketplace() {
           Marketplace
         </h2>
         <div className="flex flex-wrap -mx-4 -mb-10 text-center">
+          {isLoading && (
+            <h1 className="w-full -mt-8 px-20 py-10 text-3xl">Loading...</h1>
+          )}
+          {isSuccess && !nfts.length && (
+            <h1 className="w-full -mt-8 px-20 py-10 text-3xl">
+              No items in marketplace
+            </h1>
+          )}
           {nfts.map((nft, idx) => (
             <NFT key={idx} buyNft={buyNft} nft={nft} />
           ))}

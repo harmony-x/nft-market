@@ -12,7 +12,7 @@ const getUrl = (chainId) => {
   }
 };
 
-const getMarketContractAddress = (chainId) => {
+const getMarketContractAddress = (chainId = 1666700000) => {
   switch (chainId) {
     case 1666700000:
       return "0x2617b7048C96a5348762D9Aa241E345fcc5193f8";
@@ -21,7 +21,7 @@ const getMarketContractAddress = (chainId) => {
   }
 };
 
-const getNFTContractAddress = (chainId) => {
+export const getNFTContractAddress = (chainId = 1666700000) => {
   switch (chainId) {
     case 1666700000:
       return "0x84DD6c803601780fFC0719Be04e2A9C7b49Db241";
@@ -36,6 +36,26 @@ export const getSigner = async () => {
   const provider = new ethers.providers.Web3Provider(connection);
   const signer = provider.getSigner();
   return signer;
+};
+
+export const getNFTContract = async () => {
+  const signer = await getSigner();
+  const contract = new ethers.Contract(
+    getNFTContractAddress(),
+    NFT.abi,
+    signer
+  );
+  return contract;
+};
+
+export const getMarketContract = async () => {
+  const signer = await getSigner();
+  const contract = new ethers.Contract(
+    getMarketContractAddress(),
+    Market.abi,
+    signer
+  );
+  return contract;
 };
 
 const useContracts = async ({ getRequest = true }) => {
