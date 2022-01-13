@@ -8,6 +8,8 @@ import {
   getSigner,
 } from "../hooks/contract";
 import { ethers } from "ethers";
+import router from "next/router";
+
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 export default function Home() {
@@ -18,6 +20,8 @@ export default function Home() {
     name: "",
     description: "",
   });
+  const [creatingToken, setCreatingToken] = useState(false);
+  const [listingToken, setListingToken] = useState(false);
   async function onChange(e) {
     const file = e.target.files[0];
     setFileLoader(true);
@@ -52,32 +56,42 @@ export default function Home() {
   }
 
   async function createSale(url) {
-    const signer = await getSigner();
+    try {
+      setCreatingToken(true);
+      const signer = await getSigner();
 
-    /* next, create the item */
-    let contract = await getNFTContract();
-    let transaction = await contract.createToken(url);
-    let tx = await transaction.wait();
-    let event = tx.events[0];
-    let value = event.args[2];
-    let tokenId = value.toNumber();
-    const price = ethers.utils.parseUnits(formInput.price, "ether");
+      /* next, create the item */
+      let contract = await getNFTContract();
+      let transaction = await contract.createToken(url);
+      let tx = await transaction.wait();
+      setCreatingToken(false);
+      setListingToken(true);
+      let event = tx.events[0];
+      let value = event.args[2];
+      let tokenId = value.toNumber();
+      const price = ethers.utils.parseUnits(formInput.price, "ether");
 
-    /* then list the item for sale on the marketplace */
-    contract = await getMarketContract();
-    let listingPrice = await contract.getListingPrice();
-    listingPrice = listingPrice.toString();
+      /* then list the item for sale on the marketplace */
+      contract = await getMarketContract();
+      let listingPrice = await contract.getListingPrice();
+      listingPrice = listingPrice.toString();
 
-    transaction = await contract.createMarketItem(
-      getNFTContractAddress(),
-      tokenId,
-      price,
-      {
-        value: listingPrice,
-      }
-    );
-    await transaction.wait();
-    router.push("/");
+      transaction = await contract.createMarketItem(
+        getNFTContractAddress(),
+        tokenId,
+        price,
+        {
+          value: listingPrice,
+        }
+      );
+      await transaction.wait();
+      setListingToken(false);
+      router.push("/");
+    } catch (error) {
+      setListingToken(false);
+      setCreatingToken(false);
+      alert("Could not list the NFT for sale");
+    }
   }
 
   return (
@@ -100,7 +114,12 @@ export default function Home() {
         <div className="container px-5 py-12 mx-auto flex justify-center">
           <div className=" bg-white rounded-lg p-8 flex flex-col  md:w-4/5 w-full border-2 border-purple-500 relative z-10 shadow-md">
             <h2 className="text-gray-900 text-lg sm:text-3xl mb-4 font-semibold title-font">
-              Create and sell digital asset
+              Create and sell digital asset{" "}
+              {creatingToken
+                ? "(Creating token...)"
+                : listingToken
+                ? "(Listing token...)"
+                : ""}
             </h2>
             <p className="leading-relaxed mb-5 text-gray-600">
               Fill the form with details of your NFT so it can be listed on the
@@ -207,13 +226,18 @@ export default function Home() {
                 )}
               </div>
               <button
+                disabled={creatingToken || listingToken}
                 onClick={(e) => {
                   e.preventDefault();
                   createMarket();
                 }}
                 className="text-white bg-purple-500 border-0 py-2 px-6 focus:outline-none hover:bg-purple-600 rounded text-lg"
               >
-                List Asset
+                {creatingToken
+                  ? "Creating token..."
+                  : listingToken
+                  ? "Listing token..."
+                  : "List Asset"}
               </button>
             </form>
           </div>
